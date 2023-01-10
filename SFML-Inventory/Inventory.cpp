@@ -22,35 +22,29 @@ Inventory::Inventory(int slots_) {
 
 void Inventory::updateTextures(Scene& sceneManager) {
 	
-	sf::Texture item_texture;
 	Item item_;
 	std::string item_texture_id;
 
+	// iterate over items
 	int i = 0;
 	while (i < slots) {
 		item_ = getItem(i);
 		item_texture_id = item_.getTextureId();
 
+		// if empty item
 		if (item_.getId() == 666) {
+			// if default texture id was not saved, continue ( this will create graphical bugs )
 			if (defaultTextureId == (std::string)"") {
 				i++;
 				continue;
 			}
+			// else set it's texture to the default one
 			item_texture_id = defaultTextureId;
 		}
 
-		try
-		{
-			item_texture = sceneManager.holder[item_texture_id];
-		}
-		catch (thor::ResourceLoadingException& e)
-		{
-			i++;
-			continue;
-		}
-		
+		// and use sceneManager to change it's texture
 		sceneManager.changeSpriteTexture(item_texture_id, sprite_item_map[i], sceneManager);
-			i++;
+		i++;
 	}
 }
 

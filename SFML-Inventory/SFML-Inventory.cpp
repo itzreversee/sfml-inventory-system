@@ -29,8 +29,10 @@ sf::Texture load_texture(sf::Texture& texture, const std::string& path) {
 */
 void render(sf::RenderWindow &window, Scene &sceneManager) {
 
+    // get map of sprites
     std::map<std::string, sf::Sprite> sceneSprites = sceneManager.getSpriteMap();
 
+    // iterate over it and draw
     for (auto it = sceneSprites.begin(); it != sceneSprites.end(); ++it)
     {
         window.draw(it->second);
@@ -40,7 +42,7 @@ void render(sf::RenderWindow &window, Scene &sceneManager) {
 
 bool GLOBAL_MOUSE_PRESSED = false;      // is mouse left button pressed at all
 bool isDragging = false;                // internal variable used for checking if mouse still dragging a object
-std::string dragging_name = "";         // sprite that the user is dragging ( a pointer to save memory )
+std::string dragging_name = "";         // sprite that the user is dragging 
 sf::Vector2f dragger_original_position; // original sprite position
 
 void tick(sf::RenderWindow& window, Scene& sceneManager, sf::Mouse &mouse, Inventory &inv) {
@@ -63,6 +65,8 @@ void tick(sf::RenderWindow& window, Scene& sceneManager, sf::Mouse &mouse, Inven
 
     if (GLOBAL_MOUSE_PRESSED) {
 
+        // that if statement could be with && higher, but it would cause some item to swap during dragging 
+        // list of touching sprites is clearing itself, and thus executing else block below
         if (listOfTouching.size() > 0)
         {
        
@@ -114,8 +118,10 @@ void tick(sf::RenderWindow& window, Scene& sceneManager, sf::Mouse &mouse, Inven
             touching_id = inv.getItemIntId(touching[0]);
             toucher_id  = inv.getItemIntId(dragging_name);
 
+            // swap items in inventory
             inv.swap_places(toucher_id, touching_id);
 
+            // reset sprites position to thier original one
             sceneManager.setSpritePosition(dragging_name, dragger_original_position);
             
         }
@@ -124,6 +130,7 @@ void tick(sf::RenderWindow& window, Scene& sceneManager, sf::Mouse &mouse, Inven
             sceneManager.setSpritePosition(dragging_name, dragger_original_position);
         }
         
+        // reset variables
         isDragging = false;
         dragging_name = "";
     }
@@ -137,9 +144,11 @@ Inventory prepInventory(Scene &sceneManager) {
     // prep inventory
     Inventory inv = Inventory(9);
 
+    // set default texture id ( for fallback
     std::string default_texture_id = "grid_object";
     inv.setDefaultTextureId(default_texture_id);
 
+    // load more textures
     sf::Texture texture_coin;
     sf::Texture texture_sword;
     sf::Texture texture_stick;
@@ -156,6 +165,7 @@ Inventory prepInventory(Scene &sceneManager) {
     std::string sword_name = "Sword";
     std::string stick_name = "Stick";
 
+    // create starting items
     Item coin = Item("texture_coin", coin_name, 0);
     Item sword = Item("texture_sword", sword_name, 1);
     Item stick = Item("texture_stick", stick_name, 2);
@@ -164,6 +174,7 @@ Inventory prepInventory(Scene &sceneManager) {
     inv.addItem(sword, 1);
     inv.addItem(stick, 2);
 
+    // create grid
     std::string grid_id_0 = "grid_0";
     std::string grid_id_1 = "grid_1";
     std::string grid_id_2 = "grid_2";
@@ -174,6 +185,7 @@ Inventory prepInventory(Scene &sceneManager) {
     std::string grid_id_7 = "grid_7";
     std::string grid_id_8 = "grid_8";
 
+    // map grids integer sprite id to string sprite id
     inv.mapSpriteId(0, grid_id_0);
     inv.mapSpriteId(1, grid_id_1);
     inv.mapSpriteId(2, grid_id_2);
@@ -189,8 +201,10 @@ Inventory prepInventory(Scene &sceneManager) {
 
 int loop(sf::RenderWindow &window, Scene &sceneManager) {
 
+    // get example inventory
     Inventory inv = prepInventory(sceneManager);
 
+    // create mouse object
     sf::Mouse mouse;
 
     while (window.isOpen())
@@ -224,8 +238,6 @@ int loop(sf::RenderWindow &window, Scene &sceneManager) {
 
 int main()
 {
-    GLOBAL_MOUSE_PRESSED = false;
-
     // Initialize Scene 
     Scene sceneManager = Scene();
 
@@ -315,5 +327,6 @@ int main()
     // Create Window
     sf::RenderWindow window(sf::VideoMode(384, 384), "SFML Inventory");
 
+    // run loop, and return it when done.
     return loop(window, sceneManager);
 }

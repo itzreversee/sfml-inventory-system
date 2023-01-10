@@ -59,6 +59,7 @@ std::map<std::string, sf::Sprite> Scene::getSpritesTouchingMouse(sf::Mouse& mous
 
 	std::map<std::string, sf::Sprite> listOfTouching;
 
+	// iterate over sceneSprites and add it to the map if it's touching the mouse
 	for (const auto& it : sceneSprites) {
 		if (it.second.getGlobalBounds().contains(mouse.getPosition(window).x, mouse.getPosition(window).y)) {
 			//std::cout << it.first << " : Touching! " << std::endl;
@@ -72,12 +73,14 @@ std::vector<std::string> Scene::getSpriteTouchingOtherSprites(std::string& name)
 
 	std::vector<std::string> listOfTouching;
 
+	// if none return empty string
 	if (name == "") {
 		return listOfTouching;
 	}
 	
 	sf::Sprite toucher = sceneSprites[name];
 
+	// iterate over sceneSprites and add them to the vector, remove it's own entry from that map
 	for (const auto& it : sceneSprites) {
 		if (it.second.getGlobalBounds().contains(toucher.getPosition().x, toucher.getPosition().y)) {
 			//std::cout << it.first << " : Touching! " << std::endl;
